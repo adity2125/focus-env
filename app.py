@@ -6,34 +6,26 @@ from grader import grade
 
 app = FastAPI()
 
-@app.get("/")
-def run_env():
-    results = []
+env = None
 
-    for task in TASKS:
-        env = FocusEnv(tasks=task["tasks"])
-        env.max_steps = task["max_steps"]
+@app.post("/reset")
+def reset():
+    global env
+    env = FocusEnv(tasks=3)
+    obs = env.reset()
+    return obs.dict()
 
-        agent = Agent()
-        obs = env.reset()
+@app.post("/step")
+def step(action: dict):
+    global env
+    result = env.step(type("Action", (), action))
+    return {
+        "observation": result.observation.dict(),
+        "reward": result.reward,
+        "done": result.done,
+        "info": result.info
+    }
 
-        done = False
-        total_reward = 0
-
-        while not done:
-            action = agent.choose_action(obs)
-            result = env.step(action)
-
-            obs = result.observation
-            total_reward += result.reward
-            done = result.done
-
-        score = grade(env.state())
-
-        results.append({
-            "task": task["name"],
-            "reward": total_reward,
-            "score": score
-        })
-
-    return {"results": results}
+@app.get("/state")
+def state():
+    return env.state()
