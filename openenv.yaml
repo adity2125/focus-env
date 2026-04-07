@@ -1,31 +1,18 @@
-id: focus-env
-name: Focus Management Environment
+[project]
+name = "focus-env"
+version = "0.1.0"
+description = "OpenEnv environment for student focus optimization"
+authors = [{ name = "Aditya Sharma" }]
 
-description: |
-  An OpenEnv-based reinforcement learning environment that simulates student
-  productivity by managing focus, energy, and distractions.
+dependencies = [
+  "pydantic",
+  "fastapi",
+  "uvicorn",
+  "openenv>=0.2.0"
+]
 
-entry_point: env:FocusEnv
+[project.scripts]
+server = "app:app"
 
-observation_space:
-  type: object
-  properties:
-    focus:
-      type: integer
-    energy:
-      type: integer
-    tasks_left:
-      type: integer
-    distraction:
-      type: boolean
-
-action_space:
-  type: object
-  properties:
-    action:
-      type: string
-      enum: ["STUDY", "BREAK", "SCROLL", "IGNORE"]
-
-reward_range: [-100, 100]
-
-max_steps: 15
+[tool.openenv]
+entry_point = "env:FocusEnv"
