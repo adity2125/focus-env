@@ -1,0 +1,15 @@
+[project]
+name = "focus-env"
+version = "0.1.0"
+description = "OpenEnv environment for student focus optimization"
+authors = [
+  { name = "Aditya Sharma" }
+]
+dependencies = [
+  "pydantic",
+  "fastapi",
+  "uvicorn"
+]
+
+[tool.openenv]
+entry_point = "env:FocusEnv"
