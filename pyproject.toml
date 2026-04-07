@@ -2,14 +2,17 @@
 name = "focus-env"
 version = "0.1.0"
 description = "OpenEnv environment for student focus optimization"
-authors = [
-  { name = "Aditya Sharma" }
-]
+authors = [{ name = "Aditya Sharma" }]
+
 dependencies = [
   "pydantic",
   "fastapi",
-  "uvicorn"
+  "uvicorn",
+  "openenv>=0.2.0"
 ]
+
+[project.scripts]
+server = "app:app"
 
 [tool.openenv]
 entry_point = "env:FocusEnv"
