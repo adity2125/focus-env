@@ -1,3 +1,13 @@
+---
+title: Focus Env
+emoji: 🧠
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_file: app.py
+pinned: false
+---
+
 # Focus Management OpenEnv
 
 ## Description
