@@ -1,9 +1,8 @@
 FROM python:3.10
 
 WORKDIR /app
-
 COPY . .
 
-RUN pip install pydantic
+RUN pip install pydantic fastapi uvicorn
 
-CMD ["python", "baseline.py"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
