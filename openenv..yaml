@@ -1,5 +1,31 @@
-name: focus-management-env
-description: AI environment for optimizing student focus and productivity
-version: 0.1
+id: focus-env
+name: Focus Management Environment
 
-entrypoint: env:FocusEnv
+description: |
+  An OpenEnv-based reinforcement learning environment that simulates student
+  productivity by managing focus, energy, and distractions.
+
+entry_point: env:FocusEnv
+
+observation_space:
+  type: object
+  properties:
+    focus:
+      type: integer
+    energy:
+      type: integer
+    tasks_left:
+      type: integer
+    distraction:
+      type: boolean
+
+action_space:
+  type: object
+  properties:
+    action:
+      type: string
+      enum: ["STUDY", "BREAK", "SCROLL", "IGNORE"]
+
+reward_range: [-100, 100]
+
+max_steps: 15
