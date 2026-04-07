@@ -1,0 +1,5 @@
+name: focus-management-env
+description: AI environment for optimizing student focus and productivity
+version: 0.1
+
+entrypoint: env:FocusEnv
