@@ -13,8 +13,14 @@ def run_task(task):
 
     done = False
     total_reward = 0
+    step_count = 0
+
+    # 🔥 START block
+    print(f"[START] task={task['name']}", flush=True)
 
     while not done:
+        step_count += 1
+
         action = agent.choose_action(obs)
         result = env.step(action)
 
@@ -22,15 +28,21 @@ def run_task(task):
         total_reward += result.reward
         done = result.done
 
+        # 🔥 STEP block
+        print(f"[STEP] step={step_count} reward={result.reward}", flush=True)
+
     score = grade(env.state())
 
-    return total_reward, score
+    # 🔥 END block
+    print(
+        f"[END] task={task['name']} score={score} steps={step_count}",
+        flush=True
+    )
 
 
 def main():
     for task in TASKS:
-        reward, score = run_task(task)
-        print(f"{task['name']} → Reward: {reward}, Score: {score}")
+        run_task(task)
 
 
 if __name__ == "__main__":
