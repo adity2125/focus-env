@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from env import FocusEnv
-from agent import Agent
-from tasks import TASKS
-from grader import grade
 
 app = FastAPI()
+
+env = None
 
 def main():
     return app
@@ -32,3 +31,9 @@ def step(action: dict):
 @app.get("/state")
 def state():
     return env.state()
+
+
+# 🔥 THIS IS THE MISSING PART
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
