@@ -1,36 +1,34 @@
----
-title: Focus Env
-emoji: 🧠
-colorFrom: blue
-colorTo: purple
-sdk: docker
-app_file: app.py
-pinned: false
----
+# FocusEnv – Adaptive AI System
 
-# Focus Management OpenEnv
+## 🚀 Problem
+Many AI systems fail on harder tasks due to lack of reasoning and robustness.
 
-## Description
-This environment simulates student focus, energy, and distraction handling.
+## 💡 Solution
+FocusEnv introduces:
+- Adaptive prompting based on difficulty
+- Self-correction loop
+- Stable output formatting
 
-## Actions
-- STUDY
-- SCROLL
-- BREAK
-- IGNORE
+## 🔥 Features
+- Step-by-step reasoning (internal)
+- Error correction mechanism
+- Retry fallback for robustness
 
-## Observations
-- focus
-- energy
-- tasks_left
-- distraction
+## 🧠 Approach
+1. Input is processed with dynamic prompt
+2. Model generates initial answer
+3. Self-correction improves accuracy
+4. Clean final answer returned
 
-## Tasks
-- Easy: 2 tasks
-- Medium: 3 tasks
-- Hard: 4 tasks
+## 📊 Improvements
+- Better performance on hard tasks
+- Reduced incorrect outputs
+- Increased stability
 
-## Run
-```bash
-docker build -t focus-env .
-docker run focus-env
+## 🌐 Demo
+Available on Hugging Face Spaces
+
+## 🛠 Tech Stack
+- PyTorch
+- Transformers
+- Gradio
