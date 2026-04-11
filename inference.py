@@ -1,72 +1,81 @@
-from env import FocusEnv
-from agent import Agent
-from tasks import TASKS
-from grader import grade
+import os
+from transformers import pipeline
+
+# Load model (you can replace with your model)
+generator = pipeline(
+    "text-generation",
+    model="gpt2",
+    temperature=0.0,
+    top_p=1.0,
+    max_new_tokens=50
+)
+
+def build_prompt(input_text, difficulty="medium"):
+    base = """
+You are solving a task in an evaluation environment.
+
+Rules:
+1. Think step by step internally
+2. Be logically consistent
+3. If unsure, choose the most reasonable answer
+4. Return ONLY the final answer (no explanation)
+
+"""
+
+    # Few-shot for HARD
+    if difficulty == "hard":
+        examples = """
+Example:
+Q: What is 2+2?
+A: 4
+
+Q: If x=3, what is x^2?
+A: 9
+
+"""
+        return base + examples + f"Q: {input_text}\nA:"
+    
+    return base + f"Q: {input_text}\nA:"
 
 
-def run_task(task):
+def generate_response(prompt):
     try:
-        env = FocusEnv(tasks=task["tasks"])
-        env.max_steps = task["max_steps"]
-
-        agent = Agent()
-        obs = env.reset()
-
-        done = False
-        total_reward = 0
-        step_count = 0
-
-        # ✅ START block (required)
-        print(f"[START] task={task['name']}", flush=True)
-
-        while not done:
-            step_count += 1
-
-            try:
-                action = agent.choose_action(obs)
-            except Exception as e:
-                # 🔥 fallback if agent fails
-                print(f"[ERROR] agent failed: {e}", flush=True)
-                action = type("Action", (), {"action": "BREAK"})
-
-            try:
-                result = env.step(action)
-            except Exception as e:
-                # 🔥 fallback if env fails
-                print(f"[ERROR] env step failed: {e}", flush=True)
-                break
-
-            obs = result.observation
-            total_reward += result.reward
-            done = result.done
-
-            # ✅ STEP block (required)
-            print(
-                f"[STEP] step={step_count} reward={result.reward}",
-                flush=True
-            )
-
-        try:
-            score = grade(env.state())
-        except Exception as e:
-            print(f"[ERROR] grading failed: {e}", flush=True)
-            score = 0.0
-
-        # ✅ END block (required)
-        print(
-            f"[END] task={task['name']} score={score} steps={step_count}",
-            flush=True
-        )
-
-    except Exception as e:
-        # 🔥 NEVER crash whole script
-        print(f"[FATAL] task {task['name']} failed: {e}", flush=True)
+        output = generator(prompt)[0]["generated_text"]
+        return output.split("A:")[-1].strip()
+    except Exception:
+        return ""
 
 
-def main():
-    for task in TASKS:
-        run_task(task)
+def self_correct(answer):
+    check_prompt = f"""
+Check if this answer is correct:
+{answer}
+
+If incorrect, fix it.
+Return ONLY the final answer.
+"""
+    try:
+        corrected = generator(check_prompt)[0]["generated_text"]
+        return corrected.strip()
+    except Exception:
+        return answer
 
 
-if __name__ == "__main__":
-    main()
+def predict(input_text, difficulty="medium"):
+    prompt = build_prompt(input_text, difficulty)
+
+    # First pass
+    response1 = generate_response(prompt)
+
+    # Self-correction
+    response2 = self_correct(response1)
+
+    final_answer = response2.strip()
+
+    # Retry fallback
+    if not final_answer:
+        final_answer = generate_response(prompt)
+
+    return {
+        "answer": final_answer.strip()
+    }
