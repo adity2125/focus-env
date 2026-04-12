@@ -1,16 +1,9 @@
-def grade(state):
-    tasks_left = state["tasks_left"]
-    total_tasks = state.get("initial_tasks", 5)
+from utils import clean_text
 
-    completed = total_tasks - tasks_left
+def grade(prediction, ground_truth):
+    pred = clean_text(prediction.get("answer", ""))
+    gt = clean_text(ground_truth)
 
-    # normalize score between 0 and 1
-    raw_score = completed / total_tasks
-
-    # 🔥 clamp strictly between (0,1)
-    if raw_score >= 1.0:
-        return 0.99
-    elif raw_score <= 0.0:
-        return 0.01
-    else:
-        return round(raw_score, 2)
+    if pred == gt:
+        return 1.0
+    return 0.0
